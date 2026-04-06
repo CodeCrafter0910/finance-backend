@@ -38,7 +38,7 @@ const createRecord = async (req, res) => {
 
 const getAllRecords = async (req, res) => {
   try {
-    const { type, category, startDate, endDate } = req.query;
+    const { type, category, startDate, endDate, page = 1, limit = 10 } = req.query;
 
     let filter = {};
 
@@ -60,11 +60,26 @@ const getAllRecords = async (req, res) => {
       }
     }
 
+    const skip = (parseInt(page) - 1) * parseInt(limit);
+
     const records = await Record.find(filter)
       .populate('userId', 'username email')
-      .sort({ date: -1 });
+      .sort({ date: -1 })
+      .skip(skip)
+      .limit(parseInt(limit));
 
-    res.status(200).json({ message: 'Records retrieved', records });
+    const totalRecords = await Record.countDocuments(filter);
+
+    res.status(200).json({ 
+      message: 'Records retrieved', 
+      records,
+      pagination: {
+        totalRecords,
+        totalPages: Math.ceil(totalRecords / parseInt(limit)),
+        currentPage: parseInt(page),
+        limit: parseInt(limit)
+      }
+    });
   } catch (error) {
     res.status(500).json({ message: 'Error fetching records', error: error.message });
   }
@@ -84,11 +99,29 @@ const getRecordById = async (req, res) => {
 
 const getRecordsByUser = async (req, res) => {
   try {
-    const records = await Record.find({ userId: req.params.userId })
-      .populate('userId', 'username email')
-      .sort({ date: -1 });
+    const { page = 1, limit = 10 } = req.query;
+    const skip = (parseInt(page) - 1) * parseInt(limit);
 
-    res.status(200).json({ message: 'User records retrieved', records });
+    const filter = { userId: req.params.userId };
+
+    const records = await Record.find(filter)
+      .populate('userId', 'username email')
+      .sort({ date: -1 })
+      .skip(skip)
+      .limit(parseInt(limit));
+
+    const totalRecords = await Record.countDocuments(filter);
+
+    res.status(200).json({ 
+      message: 'User records retrieved', 
+      records,
+      pagination: {
+        totalRecords,
+        totalPages: Math.ceil(totalRecords / parseInt(limit)),
+        currentPage: parseInt(page),
+        limit: parseInt(limit)
+      }
+    });
   } catch (error) {
     res.status(500).json({ message: 'Error fetching user records', error: error.message });
   }

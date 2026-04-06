@@ -1,14 +1,18 @@
 const User = require('../models/User');
+const jwt = require('jsonwebtoken');
 
 const authenticate = async (req, res, next) => {
   try {
-    const userId = req.headers['x-user-id'];
+    const authHeader = req.headers.authorization;
 
-    if (!userId) {
-      return res.status(401).json({ message: 'User ID header missing' });
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return res.status(401).json({ message: 'Authentication token missing or invalid' });
     }
 
-    const user = await User.findById(userId).populate('role');
+    const token = authHeader.split(' ')[1];
+    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'secret_key_for_learning');
+
+    const user = await User.findById(decoded.id).populate('role');
 
     if (!user) {
       return res.status(404).json({ message: 'User not found' });

@@ -5,6 +5,7 @@ const { authenticate } = require('../middleware/authMiddleware');
 const { checkRole } = require('../middleware/roleMiddleware');
 
 router.post('/', userController.createUser);
+router.post('/login', userController.login);
 
 router.get('/', authenticate, checkRole(['admin']), userController.getAllUsers);
 
