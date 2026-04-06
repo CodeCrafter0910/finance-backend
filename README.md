@@ -34,3 +34,27 @@ My Technical Decisions and Trade-offs (For Evaluation):
 - Architecture: I kept all the business logic inside controllers and used middleware just for checking roles and verifying the JWT tokens. This keeps the routes files very clean.
 - Dashboard logic: I decided to aggregate the totals (like category spending) directly on the backend. The tradeoff here is that the backend does a bit more work, but it keeps any potential frontend super fast and lightweight.
 - Security: I initially thought about using sessions, but I went with JWT tokens because they are stateless, making the backend easier to host on free cloud services like Render without worrying about memory leaks.
+
+---
+
+### API Route Documentation (For Testing)
+If you are testing this API (via Postman or similar tools), here are the main endpoints you can use with the live Render URL:
+
+**Authentication & Users**
+- `POST /api/users` - Register a user (requires username, email, password, role)
+- `POST /api/users/login` - Login to receive your JWT Bearer token
+- `GET /api/users` - Get all users (Admin only)
+- `PATCH /api/users/:id/role` - Update a user's role (Admin only)
+
+**Financial Records**
+- `POST /api/records` - Add a new income/expense record
+- `GET /api/records` - View all records (supports ?page=1&limit=10 queries)
+- `GET /api/records/user/:userId` - View a specific user's records
+- `PATCH /api/records/:id` - Edit a record
+- `DELETE /api/records/:id` - Remove a record
+
+**Dashboard Data**
+- `GET /api/dashboard/summary` - View financial totals
+- `GET /api/dashboard/category-totals` - View category spending
+- `GET /api/dashboard/recent-activity` - View newest records
+- `GET /api/dashboard/monthly-trends` - View spending and income per month
