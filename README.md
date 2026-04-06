@@ -23,7 +23,7 @@ Tech stack I used:
 ## Role behavior
 
 - `viewer` -> can view records and dashboard
-- `analyst` -> can view records/dashboard and has extra analytics/export permissions
+- `analyst` -> can view records and dashboard
 - `admin` -> full control (users + records + role updates)
 
 ## Run this project locally
@@ -119,7 +119,7 @@ Users:
 
 Records:
 - `POST /api/records`
-- `GET /api/records`
+- `GET /api/records` (supports optional filters: `type`, `category`, `startDate`, `endDate` + pagination `page`, `limit`)
 - `GET /api/records/:id`
 - `GET /api/records/user/:userId`
 - `PATCH /api/records/:id`
