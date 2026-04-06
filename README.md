@@ -1,4 +1,4 @@
-Finance Data Processing and Access Control Backend
+- Finance Data Processing and Access Control Backend
 
 Hi there, I built this backend API to manage financial records and securely control who can see or edit them. I used Node.js, Express, and MongoDB for this project.
 
@@ -29,6 +29,7 @@ Send a POST request to /api/users/login with your email and password. You will r
 My Technical Decisions and Trade-offs For Evaluation:
 Database choice: I went with MongoDB instead of SQL like Postgres because financial records can sometimes have extra notes or changing categories, and flexible documents handle that well without strict migrations.
 Architecture: I kept all the business logic inside controllers and used middleware just for checking roles and verifying the JWT tokens. This keeps the routes files very clean.
+
 Dashboard logic: I decided to aggregate the totals like category spending directly on the backend. The tradeoff here is that the backend does a bit more work, but it keeps any potential frontend super fast and lightweight.
 Security: I initially thought about using sessions, but I went with JWT tokens because they are stateless, making the backend easier to host on free cloud services like Render without worrying about memory leaks.
 
@@ -53,3 +54,4 @@ GET /api/dashboard/summary to view financial totals.
 GET /api/dashboard/category-totals to view category spending.
 GET /api/dashboard/recent-activity to view newest records.
 GET /api/dashboard/monthly-trends to view spending and income per month.
+
