@@ -1,29 +1,36 @@
-My Finance App Backend
+Finance Data Processing and Access Control Backend
 
-Hi! I made this backend project to keep track of money and financial records. It is coded in Node.js and Express, and I used MongoDB to save all the data. 
+Hi there, I built this backend API to manage financial records and securely control who can see or edit them. I used Node.js, Express, and MongoDB for this project.
 
-I also added a permission system to control who can do what:
-Admin: The main boss who can add users, delete records, and handle everything.
-Analyst: This person can view the data and dashboard, and they can also export the information.
-Viewer: Someone who can only look at the records but can't change anything.
+Live Deployed API: https://finance-backend-8f18.onrender.com
 
-The site also has a dashboard that calculates category totals and shows your monthly spending habits.
+How the roles and permissions work:
+I set up three specific roles to control access:
+1. Viewer: Can only read the records and look at the dashboard.
+2. Analyst: Can view the records, the dashboard, and has permission to export data.
+3. Admin: Has full control. They can create users, manage records, and basically do everything.
 
-Here is how you can run it on your own computer:
-1. Download this folder.
-2. Open your terminal in this folder and type: npm install (this downloads what the app needs).
-3. You will need a database. Make a new file called .env in the folder and type your connection string inside like this: MONGODB_URI=mongodb://localhost:27017/finance-backend
-4. To turn the server on, type: npm start. It will start running on port 5000.
+Features inside the App:
+- Full CRUD for financial entries (you can add income/expenses with an amount, category, date, and description).
+- Dashboard summaries: The API calculates total income, expenses, and category breakdowns so the frontend doesn't have to do the math.
+- Secure Login: Users get a JWT (JSON Web Token) when they log in to keep sessions secure.
+- Pagination: If there are too many records, you can use ?page=1&limit=10 so the server doesn't crash from loading too much.
 
-The first thing you need to do is tell the database about the Admin, Analyst, and Viewer roles. Send a POST request to http://localhost:5000/api/roles/init-default-roles to create them.
+How to run it locally on your computer:
+1. Download or clone this repository.
+2. Open your terminal inside the folder and run: npm install
+3. You need to connect a database. Create a file named .env and put this inside:
+   MONGODB_URI=mongodb://localhost:27017/finance-backend
+   JWT_SECRET=my_secret_key_here
+4. Run: npm start (The server will run on port 5000).
 
-For security, the login system uses secure JWT (JSON Web Tokens). You send a POST request with your email and password to /api/users/login to get your token. Then, you just send that token in the header as "Authorization: Bearer YOUR_TOKEN".
+Make sure to send a POST request to /api/roles/init-default-roles first, so the database knows what Viewer, Analyst, and Admin are!
 
-The records list also has pagination now. You can add ?page=1&limit=10 to the api url so it doesn't try to load thousands of records all at once.
+To log in:
+Send a POST request to /api/users/login with your email and password. You will receive a token. Put that token in your HTTP Headers like this: "Authorization: Bearer YOUR_TOKEN" to access the restricted routes.
 
-My Technical Decisions & Tradeoffs:
-- I used Express because it's very lightweight and easy to organize the project files.
-- I chose MongoDB because it is flexible for the records and we didn't need complicated SQL tables.
-- For the dashboard, I decided to calculate the category totals on the server side so the frontend doesn't have to do heavy math.
-- I upgraded to JWT tokens because it's the right way to do security in the real world compared to just passing user IDs.
-- I added pagination (page and limit) to the records so the server doesn't choke if someone adds too many records at once.
+My Technical Decisions and Trade-offs (For Evaluation):
+- Database choice: I went with MongoDB instead of SQL (like Postgres) because financial records can sometimes have extra notes or changing categories, and MongoDB's flexible documents handle that well without strict migrations.
+- Architecture: I kept all the business logic inside controllers and used middleware just for checking roles and verifying the JWT tokens. This keeps the routes files very clean.
+- Dashboard logic: I decided to aggregate the totals (like category spending) directly on the backend. The tradeoff here is that the backend does a bit more work, but it keeps any potential frontend super fast and lightweight.
+- Security: I initially thought about using sessions, but I went with JWT tokens because they are stateless, making the backend easier to host on free cloud services like Render without worrying about memory leaks.
